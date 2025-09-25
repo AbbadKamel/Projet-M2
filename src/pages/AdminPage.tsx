@@ -1,9 +1,11 @@
+// Importation des hooks React et des composants nécessaires
 import { useMemo } from 'react';
 import AdminNavigationTabs from '../components/AdminNavigationTabs';
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
 import AdminLayout from '../templates/AdminLayout';
 
+// Composant icône pour l'aperçu (œil)
 const IconOverview = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -23,7 +25,7 @@ const IconOverview = () => (
   </svg>
 );
 
-
+// Composant icône pour les programmes (pile)
 const IconStack = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2L3 6.5L12 11L21 6.5L12 2Z" opacity="0.8" />
@@ -32,6 +34,7 @@ const IconStack = () => (
   </svg>
 );
 
+// Composant icône pour les modules (grille)
 const IconModule = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <rect x="3" y="3" width="7" height="7" rx="2" />
@@ -41,6 +44,7 @@ const IconModule = () => (
   </svg>
 );
 
+// Composant icône pour les utilisateurs/apprenants
 const IconUsers = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" />
@@ -48,12 +52,14 @@ const IconUsers = () => (
   </svg>
 );
 
+// Composant icône pour les badges (étoile)
 const IconBadge = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
   </svg>
 );
 
+// Composant icône pour ajouter (plus)
 const IconPlus = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -74,6 +80,7 @@ const IconPlus = () => (
 );
 
 
+// Composant icône pour les signets/badges (marque-page)
 const IconBookmarks = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -86,7 +93,9 @@ const IconBookmarks = () => (
   </svg>
 );
 
+// Composant principal de la page d'administration
 const AdminPage = () => {
+  // Configuration des onglets de navigation avec mémorisation pour optimiser les performances
   const navigationTabs = useMemo(
     () => [
       { label: 'Aperçu', icon: <IconOverview />, active: true },
@@ -98,6 +107,7 @@ const AdminPage = () => {
     [],
   );
 
+  // Données statistiques pour les cartes du tableau de bord
   const stats = useMemo(
     () => [
       { title: 'Programmes', value: 12, description: 'Programmes actifs dans la plateforme', accent: '#6C5DD3', icon: <IconStack /> },
@@ -108,6 +118,7 @@ const AdminPage = () => {
     [],
   );
 
+  // Configuration des boutons d'actions rapides
   const quickActions = useMemo(
     () => [
       { label: 'Nouveau Programme', description: 'Créer un nouveau parcours de formation', icon: <IconPlus /> },
@@ -118,9 +129,11 @@ const AdminPage = () => {
     [],
   );
 
+  // Rendu du composant
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
+        {/* Section d'en-tête avec titre et description */}
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-900">Panel Administrateur</h1>
@@ -130,20 +143,24 @@ const AdminPage = () => {
           </p>
         </header>
 
+        {/* Onglets de navigation du panel administrateur */}
         <AdminNavigationTabs items={navigationTabs} />
 
+        {/* Grille des cartes statistiques */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((item) => (
             <DashboardCard key={item.title} icon={item.icon} title={item.title} value={item.value} description={item.description} accentColor={item.accent} />
           ))}
         </section>
 
+        {/* Section des actions rapides */}
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
               <p className="text-sm text-slate-500">Créez du contenu ou gérez les apprenants en un clic.</p>
             </div>
+            {/* Bouton d'historique */}
             <button
               type="button"
               className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-primary hover:text-primary"
@@ -151,6 +168,7 @@ const AdminPage = () => {
               Historique
             </button>
           </div>
+          {/* Liste des boutons d'actions rapides */}
           <div className="flex flex-wrap gap-4">
             {quickActions.map((action) => (
               <QuickActionButton
@@ -168,4 +186,5 @@ const AdminPage = () => {
   );
 };
 
+// Exportation par défaut du composant
 export default AdminPage;
