@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import AdminNavigationTabs from '../components/AdminNavigationTabs';
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
@@ -144,15 +144,58 @@ const IconClipboard = () => (
 );
 
 const FormateurPage = () => {
+  const [activeTab, setActiveTab] = useState('Aperçu');
+
   const navigationTabs = useMemo(
     () => [
-      { label: 'Aperçu', icon: <IconOverview />, active: true },
-      { label: 'Mes cours', icon: <IconBook /> },
-      { label: 'Notes', icon: <IconNotes /> },
-      { label: 'Apprenants', icon: <IconUsers /> },
+      { label: 'Aperçu', icon: <IconOverview />, active: activeTab === 'Aperçu', onClick: () => setActiveTab('Aperçu') },
+      { label: 'Mes cours', icon: <IconBook />, active: activeTab === 'Mes cours', onClick: () => setActiveTab('Mes cours') },
+      { label: 'Notes', icon: <IconNotes />, active: activeTab === 'Notes', onClick: () => setActiveTab('Notes') },
+      {
+        label: 'Apprenants',
+        icon: <IconUsers />,
+        active: activeTab === 'Apprenants',
+        onClick: () => setActiveTab('Apprenants'),
+      },
     ],
-    [],
+    [activeTab],
   );
+
+  const headerContent = useMemo(() => {
+    if (activeTab === 'Mes cours') {
+      return {
+        eyebrow: 'Mes cours',
+        title: 'Gestion de vos sessions',
+        description:
+          'Consultez vos cours programmés, accédez à l’historique des sessions passées et préparez les prochaines animations.',
+      } as const;
+    }
+
+    if (activeTab === 'Notes') {
+      return {
+        eyebrow: 'Notes',
+        title: 'Suivi des évaluations',
+        description:
+          'Retrouvez les copies corrigées, assurez le suivi des notes attribuées et identifiez les apprenants à relancer.',
+      } as const;
+    }
+
+    if (activeTab === 'Apprenants') {
+      return {
+        eyebrow: 'Apprenants',
+        title: 'Accompagnement des apprenants',
+        description:
+          'Analysez la progression des apprenants, organisez des points individuels et planifiez vos actions de coaching.',
+      } as const;
+    }
+
+    return {
+      eyebrow: 'Bonjour Sophie',
+      title: 'Espace Formateur',
+      description:
+        'Retrouvez vos indicateurs clés, vos prochaines sessions et accédez rapidement aux actions les plus fréquentes pour vos apprenants.',
+    } as const;
+  }, [activeTab]);
 
   const stats = useMemo(
     () => [
@@ -204,78 +247,530 @@ const FormateurPage = () => {
     [],
   );
 
+  const myCourses = useMemo(
+    () => ({
+      upcoming: [] as Array<{ title: string; date: string; time: string; location: string; participants: number }>,
+      past: [
+        {
+          title: 'Introduction aux composants React',
+          module: 'Sous bloc React',
+          nextSession: {
+            label: 'Premier cours : Les composants React',
+            date: '15/03/2024',
+            time: '10:00 - 12:00',
+          },
+          description:
+            'Introduction aux composants React, props et JSX. Création de premiers composants fonctionnels.',
+          location: 'Salle de formation A',
+          participants: 13,
+          resources: 'Slides de formation A',
+        },
+        {
+          title: 'Les Hooks React',
+          module: 'Sous bloc React',
+          nextSession: {
+            label: 'Premier cours : Les Hooks React',
+            date: '18/03/2024',
+            time: '09:30 - 11:30',
+          },
+          description: 'Comprendre useState et useEffect pour gérer l’état et les effets de bord dans vos applications.',
+          location: 'Salle de formation B',
+          participants: 16,
+          resources: 'Supports interactifs & quiz de révision',
+        },
+      ],
+    }),
+    [],
+  );
+
+  const notesData = useMemo(
+    () => ({
+      courses: [
+        {
+          id: 'react-hooks',
+          title: 'Les Hooks React',
+          completedOn: '18/03/2024',
+          average: 15.6,
+          median: 16,
+          pending: 2,
+          bestPerformer: 'Camille Dupont',
+          improvement: '+1.2 vs précédente session',
+          distribution: {
+            excellent: 5,
+            good: 8,
+            needsSupport: 3,
+          },
+          notes: [
+            {
+              student: 'Camille Dupont',
+              grade: '18/20',
+              status: 'Validée',
+              comment: 'Excellente maîtrise des hooks personnalisés et mise en pratique impeccable.',
+            },
+            {
+              student: 'Louis Martin',
+              grade: '15/20',
+              status: 'Validée',
+              comment: 'Bonne compréhension globale, quelques pistes d’optimisation à approfondir.',
+            },
+            {
+              student: 'Amélie Girard',
+              grade: '12/20',
+              status: 'À réviser',
+              comment: 'Des difficultés sur useEffect. Prévoir une session de rattrapage ciblée.',
+            },
+          ],
+        },
+        {
+          id: 'intro-react',
+          title: 'Introduction aux composants React',
+          completedOn: '15/03/2024',
+          average: 16.2,
+          median: 16,
+          pending: 1,
+          bestPerformer: 'Nora Lefèvre',
+          improvement: '+0.8 vs précédente session',
+          distribution: {
+            excellent: 7,
+            good: 6,
+            needsSupport: 2,
+          },
+          notes: [
+            {
+              student: 'Nora Lefèvre',
+              grade: '19/20',
+              status: 'Validée',
+              comment: 'Participation active et restitution parfaite des concepts de base.',
+            },
+            {
+              student: 'Sofiane Haddad',
+              grade: '14/20',
+              status: 'Validée',
+              comment: 'Bonnes notions générales, renforcer la pratique sur les props.',
+            },
+            {
+              student: 'Lucie Bernard',
+              grade: '11/20',
+              status: 'À réviser',
+              comment: 'Notions de JSX à consolider. Proposition d’un atelier supplémentaire.',
+            },
+          ],
+        },
+      ],
+    }),
+    [],
+  );
+
+  const [selectedNotesCourseId, setSelectedNotesCourseId] = useState(notesData.courses[0]?.id ?? '');
+
+  const selectedNotesCourse = useMemo(
+    () => notesData.courses.find((course) => course.id === selectedNotesCourseId),
+    [notesData, selectedNotesCourseId],
+  );
+
   return (
     <FormateurLayout>
       <section className="flex flex-col gap-8">
         <header className="rounded-3xl bg-white/80 p-8 shadow-sm backdrop-blur">
-          <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">Bonjour Sophie</p>
-          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Espace Formateur</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">
-            Retrouvez vos indicateurs clés, vos prochaines sessions et accédez rapidement aux actions les plus fréquentes pour vos
-            apprenants.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-amber-500">{headerContent.eyebrow}</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-900">{headerContent.title}</h1>
+          <p className="mt-2 max-w-2xl text-sm text-slate-600">{headerContent.description}</p>
         </header>
 
         <AdminNavigationTabs items={navigationTabs} />
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {stats.map((item) => (
-            <DashboardCard
-              key={item.title}
-              icon={item.icon}
-              title={item.title}
-              value={item.value}
-              description={item.description}
-              accentColor={item.accent}
-            />
-          ))}
-        </section>
+        {activeTab === 'Aperçu' ? (
+          <>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {stats.map((item) => (
+                <DashboardCard
+                  key={item.title}
+                  icon={item.icon}
+                  title={item.title}
+                  value={item.value}
+                  description={item.description}
+                  accentColor={item.accent}
+                />
+              ))}
+            </section>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
-              <p className="text-sm text-slate-500">Gagnez du temps sur les tâches essentielles de votre quotidien.</p>
-            </div>
-            <button
-              type="button"
-              className="rounded-full border border-amber-200 bg-white px-5 py-2 text-sm font-medium text-amber-600 shadow-sm transition hover:border-amber-300 hover:text-amber-700"
-            >
-              Historique des actions
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            {quickActions.map((action) => (
-              <QuickActionButton
-                key={action.label}
-                icon={action.icon}
-                label={action.label}
-                description={action.description}
-                onClick={() => console.log(`${action.label} clicked`)}
-              />
-            ))}
-          </div>
-        </section>
+            <section className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
+                  <p className="text-sm text-slate-500">Gagnez du temps sur les tâches essentielles de votre quotidien.</p>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full border border-amber-200 bg-white px-5 py-2 text-sm font-medium text-amber-600 shadow-sm transition hover:border-amber-300 hover:text-amber-700"
+                >
+                  Historique des actions
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {quickActions.map((action) => (
+                  <QuickActionButton
+                    key={action.label}
+                    icon={action.icon}
+                    label={action.label}
+                    description={action.description}
+                    onClick={() => console.log(`${action.label} clicked`)}
+                  />
+                ))}
+              </div>
+            </section>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">Prochains cours</h2>
-              <p className="text-sm text-slate-500">Gardez une longueur d’avance sur vos prochaines interventions.</p>
+            <section className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Prochains cours</h2>
+                  <p className="text-sm text-slate-500">Gardez une longueur d’avance sur vos prochaines interventions.</p>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-amber-600"
+                >
+                  Voir le planning complet
+                </button>
+              </div>
+              <div className="grid gap-4 lg:grid-cols-3">
+                {upcomingCourses.map((course) => (
+                  <UpcomingCourseCard key={course.title} {...course} />
+                ))}
+              </div>
+            </section>
+          </>
+        ) : null}
+
+        {activeTab === 'Mes cours' ? (
+          <section className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Cours à venir</h2>
+                  <p className="text-sm text-slate-500">Visualisez les prochaines sessions prévues dans votre agenda.</p>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full border border-amber-200 bg-white px-5 py-2 text-sm font-medium text-amber-600 shadow-sm transition hover:border-amber-300 hover:text-amber-700"
+                >
+                  Programmer un cours
+                </button>
+              </div>
+              {myCourses.upcoming.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {myCourses.upcoming.map((course) => (
+                    <article
+                      key={`${course.title}-${course.date}`}
+                      className="relative overflow-hidden rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <span className="absolute inset-y-0 left-0 w-1 rounded-full bg-amber-400" />
+                      <div className="pl-4">
+                        <h3 className="text-lg font-semibold text-slate-900">{course.title}</h3>
+                        <p className="mt-1 text-sm text-slate-500">{course.date}</p>
+                        <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
+                          <span className="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 5h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                              <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                              <path d="M8 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                              <path d="M16 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                            {course.time}
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M12 21s7-5.686 7-11a7 7 0 0 0-14 0c0 5.314 7 11 7 11Z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                            </svg>
+                            {course.location}
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
+                            </svg>
+                            {course.participants} apprenants
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-amber-200 bg-white/70 p-10 text-center">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                    <IconCalendar />
+                  </span>
+                  <div>
+                    <p className="text-base font-semibold text-slate-900">Aucun cours programmé</p>
+                    <p className="mt-1 text-sm text-slate-500">Ajoutez une nouvelle session ou consultez vos cours passés.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-amber-600"
+                  >
+                    Créer une session
+                  </button>
+                </div>
+              )}
             </div>
-            <button
-              type="button"
-              className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-amber-600"
-            >
-              Voir le planning complet
-            </button>
-          </div>
-          <div className="grid gap-4 lg:grid-cols-3">
-            {upcomingCourses.map((course) => (
-              <UpcomingCourseCard key={course.title} {...course} />
-            ))}
-          </div>
-        </section>
+
+            <div className="flex flex-col gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Cours passés</h2>
+                <p className="text-sm text-slate-500">Retrouvez les détails de vos dernières interventions.</p>
+              </div>
+              <div className="flex flex-col gap-4">
+                {myCourses.past.map((course) => (
+                  <article
+                    key={course.title}
+                    className="rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-amber-500">{course.module}</p>
+                        <h3 className="mt-1 text-lg font-semibold text-slate-900">{course.title}</h3>
+                        <p className="mt-2 text-sm text-slate-500">{course.nextSession.label}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600">
+                          {course.participants} apprenants
+                        </span>
+                        <span className="flex items-center gap-2 text-xs text-slate-400">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12 21s7-5.686 7-11a7 7 0 0 0-14 0c0 5.314 7 11 7 11Z"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                          </svg>
+                          {course.location}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="mt-4 text-sm text-slate-600">{course.description}</p>
+                    <div className="mt-4 grid gap-4 text-sm text-slate-500 md:grid-cols-3">
+                      <span className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M3 5h18"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                          <rect
+                            x="4"
+                            y="5"
+                            width="16"
+                            height="15"
+                            rx="2"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          />
+                          <path d="M8 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          <path d="M16 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                        {course.nextSession.date}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M12 7v5l3 3"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                        </svg>
+                        {course.nextSession.time}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M9 3h6l1 2h4v2h-1v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7H4V5h4l1-2Z"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path d="M9 11h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          <path d="M9 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                        {course.resources}
+                      </span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {activeTab === 'Notes' ? (
+          <section className="flex flex-col gap-6">
+            <div className="rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Gestion des notes</h2>
+                  <p className="text-sm text-slate-500">
+                    Sélectionnez un cours terminé pour consulter les résultats et finaliser les copies restantes.
+                  </p>
+                </div>
+                <label className="flex w-full flex-col gap-2 text-sm text-slate-600 md:w-80">
+                  <span className="font-medium text-slate-700">Choisir un cours</span>
+                  <select
+                    value={selectedNotesCourseId}
+                    onChange={(event) => setSelectedNotesCourseId(event.target.value)}
+                    className="w-full rounded-xl border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                  >
+                    {notesData.courses.map((course) => (
+                      <option key={course.id} value={course.id}>
+                        {course.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            {selectedNotesCourse ? (
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <DashboardCard
+                    icon={<IconStar />}
+                    title="Moyenne de la session"
+                    value={`${selectedNotesCourse.average.toString().replace('.', ',')}/20`}
+                    description={selectedNotesCourse.improvement}
+                    accentColor="#F59E0B"
+                  />
+                  <DashboardCard
+                    icon={<IconBook />}
+                    title="Médiane"
+                    value={`${selectedNotesCourse.median}/20`}
+                    description="Stabilité des résultats"
+                    accentColor="#F97316"
+                  />
+                  <DashboardCard
+                    icon={<IconClipboard />}
+                    title="Copies en attente"
+                    value={selectedNotesCourse.pending}
+                    description="À corriger ou valider"
+                    accentColor="#FBBF24"
+                  />
+                  <DashboardCard
+                    icon={<IconUsers />}
+                    title="Meilleure progression"
+                    value={selectedNotesCourse.bestPerformer}
+                    description="Apprenant à féliciter"
+                    accentColor="#FB923C"
+                  />
+                </div>
+
+                <div className="rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900">Répartition des résultats</h3>
+                      <p className="text-sm text-slate-500">
+                        Session clôturée le {selectedNotesCourse.completedOn}.
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-amber-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-amber-600">
+                      {selectedNotesCourse.notes.length} apprenants évalués
+                    </span>
+                  </div>
+                  <div className="mt-4 grid gap-4 md:grid-cols-3">
+                    <div className="rounded-2xl border border-amber-100 bg-white p-4">
+                      <p className="text-sm font-semibold text-amber-600">Excellent (&ge; 16)</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-900">{selectedNotesCourse.distribution.excellent}</p>
+                      <p className="text-xs text-slate-500">Apprenants à valoriser</p>
+                    </div>
+                    <div className="rounded-2xl border border-amber-100 bg-white p-4">
+                      <p className="text-sm font-semibold text-amber-600">Bon (12-15)</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-900">{selectedNotesCourse.distribution.good}</p>
+                      <p className="text-xs text-slate-500">Résultats satisfaisants</p>
+                    </div>
+                    <div className="rounded-2xl border border-amber-100 bg-white p-4">
+                      <p className="text-sm font-semibold text-amber-600">À suivre (&lt; 12)</p>
+                      <p className="mt-2 text-2xl font-semibold text-slate-900">{selectedNotesCourse.distribution.needsSupport}</p>
+                      <p className="text-xs text-slate-500">Prévoir un accompagnement</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="text-lg font-semibold text-slate-900">Détails par apprenant</h3>
+                    <button
+                      type="button"
+                      className="rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow transition hover:bg-amber-600"
+                    >
+                      Exporter les notes
+                    </button>
+                  </div>
+                  <div className="mt-4 overflow-hidden rounded-2xl border border-amber-100">
+                    <table className="min-w-full divide-y divide-amber-100 text-left text-sm">
+                      <thead className="bg-amber-50/80 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                        <tr>
+                          <th scope="col" className="px-4 py-3">Apprenant</th>
+                          <th scope="col" className="px-4 py-3">Note</th>
+                          <th scope="col" className="px-4 py-3">Statut</th>
+                          <th scope="col" className="px-4 py-3">Commentaire</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-amber-50 bg-white/60">
+                        {selectedNotesCourse.notes.map((note) => (
+                          <tr key={note.student} className="transition hover:bg-amber-50/60">
+                            <td className="px-4 py-3 font-medium text-slate-800">{note.student}</td>
+                            <td className="px-4 py-3 text-slate-700">{note.grade}</td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                  note.status === 'Validée'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'bg-amber-100 text-amber-700'
+                                }`}
+                              >
+                                {note.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-600">{note.comment}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-amber-200 bg-white/70 p-10 text-center">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                  <IconClipboard />
+                </span>
+                <div>
+                  <p className="text-base font-semibold text-slate-900">Aucune session sélectionnée</p>
+                  <p className="mt-1 text-sm text-slate-500">Choisissez un cours pour consulter les copies corrélées.</p>
+                </div>
+              </div>
+            )}
+          </section>
+        ) : null}
       </section>
     </FormateurLayout>
   );
