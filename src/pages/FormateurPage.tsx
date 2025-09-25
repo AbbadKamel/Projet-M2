@@ -315,6 +315,7 @@ const FormateurPage = () => {
             },
             {
               student: 'Amélie Girard',
+
               grade: '12/20',
               status: 'À réviser',
               comment: 'Des difficultés sur useEffect. Prévoir une session de rattrapage ciblée.',
@@ -388,12 +389,14 @@ const FormateurPage = () => {
     [],
   );
 
+
   const [selectedNotesCourseId, setSelectedNotesCourseId] = useState(notesData.courses[0]?.id ?? '');
 
   const selectedNotesCourse = useMemo(
     () => notesData.courses.find((course) => course.id === selectedNotesCourseId),
     [notesData, selectedNotesCourseId],
   );
+
 
   return (
     <FormateurLayout>
@@ -874,6 +877,7 @@ const FormateurPage = () => {
                 Ajouter un apprenant
               </button>
             </div>
+
           </section>
         ) : null}
       </section>
