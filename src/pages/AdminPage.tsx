@@ -1,27 +1,8 @@
 import { useMemo } from 'react';
-import AdminNavigationTabs from '../components/AdminNavigationTabs';
+
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
 import AdminLayout from '../templates/AdminLayout';
-
-const IconOverview = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M10 3.3335C5.83333 3.3335 2.275 6.1085 1 10.0002C2.275 13.8918 5.83333 16.6668 10 16.6668C14.1667 16.6668 17.725 13.8918 19 10.0002C17.725 6.1085 14.1667 3.3335 10 3.3335Z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M10 6.6665C8.15833 6.6665 6.66666 8.15817 6.66666 9.99984"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
 
 const IconStack = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -72,29 +53,6 @@ const IconPlus = () => (
   </svg>
 );
 
-const IconBookmarks = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M5.00033 17.5002L10.0003 14.5835L15.0003 17.5002V4.5835C15.0003 3.66299 14.2549 2.91683 13.3337 2.91683H6.667C5.74578 2.91683 5.00033 3.66299 5.00033 4.5835V17.5002Z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const AdminPage = () => {
-  const navigationTabs = useMemo(
-    () => [
-      { label: 'Aperçu', icon: <IconOverview />, active: true },
-      { label: 'Programmes', icon: <IconStack /> },
-      { label: 'Modules', icon: <IconModule /> },
-      { label: 'Apprenants', icon: <IconUsers /> },
-      { label: 'Badges', icon: <IconBookmarks /> },
-    ],
-    [],
-  );
 
   const stats = useMemo(
     () => [
@@ -159,7 +117,6 @@ const AdminPage = () => {
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
-        <AdminNavigationTabs items={navigationTabs} />
 
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
