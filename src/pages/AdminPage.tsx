@@ -155,6 +155,16 @@ const AdminPage = () => {
       } as const;
     }
 
+    if (activeTab === 'Modules') {
+      return {
+        eyebrow: 'Modules',
+        title: 'Gestion des Modules',
+        description:
+          'Suivez le catalogue des modules, ajustez les niveaux de difficulté et mettez à jour les ressources pédagogiques en quelques clics.',
+      } as const;
+    }
+
+
     return {
       eyebrow: 'Aperçu',
       title: 'Panel Administrateur',
@@ -162,7 +172,6 @@ const AdminPage = () => {
         'Gestion centralisée de La Ruche Académie. Visualisez les indicateurs clés et préparez les actions à réaliser pour vos apprenants, formateurs et contenus.',
     } as const;
   }, [activeTab]);
-
 
   const stats = useMemo(
     () => [
@@ -198,6 +207,36 @@ const AdminPage = () => {
         description: 'Maîtrise du développement côté serveur et bases de données',
         modules: 5,
         nextSession: '06/11/2023',
+      },
+    ],
+    [],
+  );
+
+  const modules = useMemo(
+    () => [
+      {
+        title: 'Les Bases de React',
+        description: 'Apprends les fondamentaux de React pour créer des interfaces utilisateur modernes',
+        level: 'Débutant',
+        duration: '4h',
+        category: 'Frontend',
+        programme: 'Programme Développement Frontend',
+      },
+      {
+        title: 'JavaScript Avancé',
+        description: 'Maîtrise les concepts avancés de JavaScript pour devenir un développeur expert',
+        level: 'Avancé',
+        duration: '6h',
+        category: 'Programmation',
+        programme: 'Programme Développement Frontend',
+      },
+      {
+        title: 'Maîtrise CSS',
+        description: 'Deviens expert en CSS et animations pour créer des interfaces époustouflantes',
+        level: 'Intermédiaire',
+        duration: '5h',
+        category: 'Frontend',
+        programme: 'Programme Développement Frontend',
       },
     ],
     [],
@@ -304,6 +343,70 @@ const AdminPage = () => {
                         <IconEdit />
                       </span>
                       Gérer
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+                    >
+                      Consulter
+                      <span className="text-base text-white">
+                        <IconArrowUpRight />
+                      </span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {activeTab === 'Modules' ? (
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Gestion des Modules</h2>
+                <p className="text-sm text-slate-500">
+                  Retrouvez vos ressources pédagogiques, suivez leurs niveaux et tenez vos apprenants informés.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+              >
+                <span className="text-base text-white">
+                  <IconPlus />
+                </span>
+                Nouveau Module
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {modules.map((module) => (
+                <article
+                  key={module.title}
+                  className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between"
+                >
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-slate-900">{module.title}</h3>
+                    <p className="mt-1 text-sm text-slate-500">{module.description}</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500 sm:text-sm">
+                      <span className="mr-1 rounded-full bg-primary-light/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                        {module.level}
+                      </span>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{module.duration}</span>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{module.category}</span>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{module.programme}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-primary hover:text-primary"
+                    >
+                      <span className="text-base text-slate-400">
+                        <IconEdit />
+                      </span>
+                      Modifier
                     </button>
                     <button
                       type="button"
