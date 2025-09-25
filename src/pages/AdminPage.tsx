@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import AdminNavigationTabs from '../components/AdminNavigationTabs';
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
@@ -86,17 +86,75 @@ const IconBookmarks = () => (
   </svg>
 );
 
+const IconArrowUpRight = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M12.75 12.75L5.25 5.25"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M6.75 12.75H12.75V6.75"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const IconEdit = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M9.75 3.375H4.5C3.67157 3.375 3 4.04657 3 4.875V13.125C3 13.9534 3.67157 14.625 4.5 14.625H12.75C13.5784 14.625 14.25 13.9534 14.25 13.125V7.875"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12.75 2.625L15.375 5.25L9 11.625H6.375V9L12.75 2.625Z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 const AdminPage = () => {
+  const [activeTab, setActiveTab] = useState('Aperçu');
+
   const navigationTabs = useMemo(
     () => [
-      { label: 'Aperçu', icon: <IconOverview />, active: true },
-      { label: 'Programmes', icon: <IconStack /> },
-      { label: 'Modules', icon: <IconModule /> },
-      { label: 'Apprenants', icon: <IconUsers /> },
-      { label: 'Badges', icon: <IconBookmarks /> },
+      { label: 'Aperçu', icon: <IconOverview />, active: activeTab === 'Aperçu', onClick: () => setActiveTab('Aperçu') },
+      { label: 'Programmes', icon: <IconStack />, active: activeTab === 'Programmes', onClick: () => setActiveTab('Programmes') },
+      { label: 'Modules', icon: <IconModule />, active: activeTab === 'Modules', onClick: () => setActiveTab('Modules') },
+      { label: 'Apprenants', icon: <IconUsers />, active: activeTab === 'Apprenants', onClick: () => setActiveTab('Apprenants') },
+      { label: 'Badges', icon: <IconBookmarks />, active: activeTab === 'Badges', onClick: () => setActiveTab('Badges') },
     ],
-    [],
+    [activeTab],
   );
+
+  const headerContent = useMemo(() => {
+    if (activeTab === 'Programmes') {
+      return {
+        eyebrow: 'Programmes',
+        title: 'Gestion des Programmes',
+        description:
+          'Suivez vos parcours de formation, planifiez les nouvelles sessions et assurez la cohérence de vos contenus pédagogiques.',
+      } as const;
+    }
+
+    return {
+      eyebrow: 'Aperçu',
+      title: 'Panel Administrateur',
+      description:
+        'Gestion centralisée de La Ruche Académie. Visualisez les indicateurs clés et préparez les actions à réaliser pour vos apprenants, formateurs et contenus.',
+    } as const;
+  }, [activeTab]);
 
   const stats = useMemo(
     () => [
@@ -118,51 +176,138 @@ const AdminPage = () => {
     [],
   );
 
+  const programmes = useMemo(
+    () => [
+      {
+        title: 'Développement Frontend',
+        description: "Formation complète sur le développement d'interfaces utilisateurs modernes",
+        modules: 6,
+        nextSession: '01/11/2023',
+      },
+      {
+        title: 'Développement Backend',
+        description: 'Maîtrise du développement côté serveur et bases de données',
+        modules: 5,
+        nextSession: '06/11/2023',
+      },
+    ],
+    [],
+  );
+
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
         <header>
-          <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
-          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Panel Administrateur</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            Gestion centralisée de La Ruche Académie. Visualisez les indicateurs clés et préparez les actions à réaliser pour
-            vos apprenants, formateurs et contenus.
-          </p>
+          <p className="text-sm font-medium uppercase tracking-wide text-primary">{headerContent.eyebrow}</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-900">{headerContent.title}</h1>
+          <p className="mt-2 max-w-2xl text-sm text-slate-500">{headerContent.description}</p>
         </header>
 
         <AdminNavigationTabs items={navigationTabs} />
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((item) => (
-            <DashboardCard key={item.title} icon={item.icon} title={item.title} value={item.value} description={item.description} accentColor={item.accent} />
-          ))}
-        </section>
+        {activeTab === 'Aperçu' ? (
+          <>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {stats.map((item) => (
+                <DashboardCard
+                  key={item.title}
+                  icon={item.icon}
+                  title={item.title}
+                  value={item.value}
+                  description={item.description}
+                  accentColor={item.accent}
+                />
+              ))}
+            </section>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
-              <p className="text-sm text-slate-500">Créez du contenu ou gérez les apprenants en un clic.</p>
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
+                  <p className="text-sm text-slate-500">Créez du contenu ou gérez les apprenants en un clic.</p>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-primary hover:text-primary"
+                >
+                  Historique
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {quickActions.map((action) => (
+                  <QuickActionButton
+                    key={action.label}
+                    icon={action.icon}
+                    label={action.label}
+                    description={action.description}
+                    onClick={() => console.log(`${action.label} clicked`)}
+                  />
+                ))}
+              </div>
+            </section>
+          </>
+        ) : null}
+
+        {activeTab === 'Programmes' ? (
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Gestion des Programmes</h2>
+                <p className="text-sm text-slate-500">Retrouvez vos parcours de formation et préparez les prochaines sessions.</p>
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+              >
+                <span className="text-base text-white">
+                  <IconPlus />
+                </span>
+                Nouveau Programme
+              </button>
             </div>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-primary hover:text-primary"
-            >
-              Historique
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            {quickActions.map((action) => (
-              <QuickActionButton
-                key={action.label}
-                icon={action.icon}
-                label={action.label}
-                description={action.description}
-                onClick={() => console.log(`${action.label} clicked`)}
-              />
-            ))}
-          </div>
-        </section>
+
+            <div className="flex flex-col gap-4">
+              {programmes.map((programme) => (
+                <article
+                  key={programme.title}
+                  className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="max-w-2xl">
+                    <h3 className="text-lg font-semibold text-slate-900">{programme.title}</h3>
+                    <p className="mt-1 text-sm text-slate-500">{programme.description}</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                      <span className="mr-2 rounded-full bg-primary-light/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                        {programme.modules} modules
+                      </span>
+                      <span className="hidden h-1 w-1 rounded-full bg-slate-300 sm:block" />
+                      <span>Prochaine session le {programme.nextSession}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-primary hover:text-primary"
+                    >
+                      <span className="text-base text-slate-400">
+                        <IconEdit />
+                      </span>
+                      Gérer
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+                    >
+                      Consulter
+                      <span className="text-base text-white">
+                        <IconArrowUpRight />
+                      </span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </section>
     </AdminLayout>
   );
