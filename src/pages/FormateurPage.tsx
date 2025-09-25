@@ -314,7 +314,7 @@ const FormateurPage = () => {
               comment: 'Bonne compréhension globale, quelques pistes d’optimisation à approfondir.',
             },
             {
-              student: 'Amélie Girard',
+              student: 'Abdelatif sidi moussa',
               grade: '12/20',
               status: 'À réviser',
               comment: 'Des difficultés sur useEffect. Prévoir une session de rattrapage ciblée.',
