@@ -368,6 +368,7 @@ const FormateurPage = () => {
     [notesData, selectedNotesCourseId],
   );
 
+
   return (
     <FormateurLayout>
       <section className="flex flex-col gap-8">
@@ -769,6 +770,7 @@ const FormateurPage = () => {
                 </div>
               </div>
             )}
+
           </section>
         ) : null}
       </section>
