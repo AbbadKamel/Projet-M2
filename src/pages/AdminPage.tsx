@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
 import AdminLayout from '../templates/AdminLayout';
@@ -52,7 +53,7 @@ const IconPlus = () => (
   </svg>
 );
 
-const AdminPage = () => {
+
   const stats = useMemo(
     () => [
       {
@@ -116,6 +117,7 @@ const AdminPage = () => {
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
+
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-900">Panel Administrateur</h1>
