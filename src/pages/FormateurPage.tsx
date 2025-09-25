@@ -314,7 +314,8 @@ const FormateurPage = () => {
               comment: 'Bonne compréhension globale, quelques pistes d’optimisation à approfondir.',
             },
             {
-              student: 'Abdelatif sidi moussa',
+              student: 'Amélie Girard',
+
               grade: '12/20',
               status: 'À réviser',
               comment: 'Des difficultés sur useEffect. Prévoir une session de rattrapage ciblée.',
@@ -360,6 +361,34 @@ const FormateurPage = () => {
     }),
     [],
   );
+
+  const learners = useMemo(
+    () => [
+      {
+        name: 'Marie Dubois',
+        role: 'Référente Expert',
+        cohort: 'Parcours Bootcamp React',
+        progress: 75,
+        score: '523 pts',
+      },
+      {
+        name: 'Thomas Leroy',
+        role: 'Double cursus',
+        cohort: 'UX Design & Front-end',
+        progress: 68,
+        score: '488 pts',
+      },
+      {
+        name: 'Emma Bernard',
+        role: 'Micro-badge',
+        cohort: 'No-code & IA',
+        progress: 47,
+        score: '475 pts',
+      },
+    ],
+    [],
+  );
+
 
   const [selectedNotesCourseId, setSelectedNotesCourseId] = useState(notesData.courses[0]?.id ?? '');
 
@@ -770,6 +799,84 @@ const FormateurPage = () => {
                 </div>
               </div>
             )}
+          </section>
+        ) : null}
+
+        {activeTab === 'Apprenants' ? (
+          <section className="flex flex-col gap-6">
+            <div className="rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900">Mes apprenants</h2>
+                  <p className="text-sm text-slate-500">
+                    Suivez l’avancement des apprenants de vos parcours et ciblez ceux à accompagner en priorité.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full border border-amber-200 bg-white px-5 py-2 text-sm font-semibold text-amber-600 shadow-sm transition hover:border-amber-300 hover:text-amber-700"
+                >
+                  Exporter la liste
+                </button>
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3">
+                {learners.map((learner) => (
+                  <article
+                    key={learner.name}
+                    className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber-100 bg-white/70 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-base font-semibold text-amber-600">
+                        {learner.name
+                          .split(' ')
+                          .map((part) => part[0])
+                          .join('')}
+                      </span>
+                      <div>
+                        <p className="text-base font-semibold text-slate-900">{learner.name}</p>
+                        <p className="text-sm text-slate-500">{learner.cohort}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-6">
+                      <div className="flex flex-col gap-2">
+                        <span className="w-fit rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-600">
+                          {learner.role}
+                        </span>
+                        <div className="w-48">
+                          <div className="h-2 w-full rounded-full bg-amber-100">
+                            <div
+                              className="h-2 rounded-full bg-amber-500"
+                              style={{ width: `${learner.progress}%` }}
+                            />
+                          </div>
+                          <p className="mt-1 text-xs font-medium text-slate-500">{learner.progress}% de progression</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-semibold text-amber-600">{learner.score}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-amber-200 bg-white/70 p-10 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                <IconUsers />
+              </span>
+              <div>
+                <p className="text-base font-semibold text-slate-900">Invitez un nouvel apprenant</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Ajoutez rapidement un profil pour l’associer à vos prochaines sessions de formation.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-amber-600"
+              >
+                Ajouter un apprenant
+              </button>
+            </div>
 
           </section>
         ) : null}
