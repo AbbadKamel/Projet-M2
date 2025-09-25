@@ -121,8 +121,6 @@ const AdminPage = () => {
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
-        <AdminNavigationTabs items={navigationTabs} />
-
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-900">Panel Administrateur</h1>
@@ -131,6 +129,8 @@ const AdminPage = () => {
             vos apprenants, formateurs et contenus.
           </p>
         </header>
+
+        <AdminNavigationTabs items={navigationTabs} />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((item) => (
