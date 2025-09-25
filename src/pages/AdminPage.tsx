@@ -1,9 +1,11 @@
+// Importation des hooks React et des composants nécessaires
 import { useMemo, useState } from 'react';
 import AdminNavigationTabs from '../components/AdminNavigationTabs';
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
 import AdminLayout from '../templates/AdminLayout';
 
+// Composant icône pour l'aperçu (œil)
 const IconOverview = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -77,7 +79,7 @@ const IconPlus = () => (
   </svg>
 );
 
-
+// Composant icône pour les signets/badges (marque-page)
 const IconBookmarks = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -90,6 +92,7 @@ const IconBookmarks = () => (
   </svg>
 );
 
+// Composant icône pour les flèches vers le haut-droite
 const IconArrowUpRight = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -109,6 +112,7 @@ const IconArrowUpRight = () => (
   </svg>
 );
 
+// Composant icône pour l'édition
 const IconEdit = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -128,9 +132,12 @@ const IconEdit = () => (
   </svg>
 );
 
+// Composant principal de la page d'administration
 const AdminPage = () => {
+  // État pour gérer l'onglet actif
   const [activeTab, setActiveTab] = useState('Aperçu');
 
+  // Configuration des onglets de navigation avec mémorisation pour optimiser les performances
   const navigationTabs = useMemo(
     () => [
       { label: 'Aperçu', icon: <IconOverview />, active: activeTab === 'Aperçu', onClick: () => setActiveTab('Aperçu') },
@@ -142,6 +149,7 @@ const AdminPage = () => {
     [activeTab],
   );
 
+  // Configuration du contenu d'en-tête selon l'onglet actif
   const headerContent = useMemo(() => {
     if (activeTab === 'Programmes') {
       return {
@@ -161,6 +169,23 @@ const AdminPage = () => {
       } as const;
     }
 
+    if (activeTab === 'Apprenants') {
+      return {
+        eyebrow: 'Apprenants',
+        title: 'Gestion des Apprenants',
+        description:
+          'Supervisez les inscriptions, accompagnez la progression individuelle et préparez les prochains suivis personnalisés.',
+      } as const;
+    }
+
+    if (activeTab === 'Badges') {
+      return {
+        eyebrow: 'Badges',
+        title: 'Gestion des Badges',
+        description:
+          'Créez et gérez vos badges de reconnaissance, définissez les critères d\'obtention et suivez les attributions.',
+      } as const;
+    }
 
     return {
       eyebrow: 'Aperçu',
@@ -170,6 +195,7 @@ const AdminPage = () => {
     } as const;
   }, [activeTab]);
 
+  // Données statistiques pour les cartes du tableau de bord
   const stats = useMemo(
     () => [
       { title: 'Programmes', value: 12, description: 'Programmes actifs dans la plateforme', accent: '#6C5DD3', icon: <IconStack /> },
@@ -180,6 +206,7 @@ const AdminPage = () => {
     [],
   );
 
+  // Configuration des boutons d'actions rapides
   const quickActions = useMemo(
     () => [
       { label: 'Nouveau Programme', description: 'Créer un nouveau parcours de formation', icon: <IconPlus /> },
@@ -190,6 +217,7 @@ const AdminPage = () => {
     [],
   );
 
+  // Données des programmes de formation
   const programmes = useMemo(
     () => [
       {
@@ -208,6 +236,7 @@ const AdminPage = () => {
     [],
   );
 
+  // Données des modules de formation
   const modules = useMemo(
     () => [
       {
@@ -238,20 +267,58 @@ const AdminPage = () => {
     [],
   );
 
+  // Données des apprenants
+  const learners = useMemo(
+    () => [
+      {
+        name: 'Marie Dubois',
+        handle: '@mariedubois',
+        email: 'marie.dubois@laruche.fr',
+        programme: 'Parcours UX Design',
+        modulesCompleted: 4,
+        totalModules: 6,
+        lastActivity: 'Il y a 2 heures',
+      },
+      {
+        name: 'Thomas Lévy',
+        handle: '@thomaslevy',
+        email: 'thomas.levy@laruche.fr',
+        programme: 'Programme Développement Backend',
+        modulesCompleted: 3,
+        totalModules: 5,
+        lastActivity: 'Hier',
+      },
+      {
+        name: 'Emma Bernard',
+        handle: '@emma.bernard',
+        email: 'emma.bernard@laruche.fr',
+        programme: 'Programme Data Analyst',
+        modulesCompleted: 5,
+        totalModules: 7,
+        lastActivity: 'Il y a 3 jours',
+      },
+    ],
+    [],
+  );
 
+  // Rendu du composant
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
+        {/* Section d'en-tête avec titre et description */}
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">{headerContent.eyebrow}</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-900">{headerContent.title}</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">{headerContent.description}</p>
         </header>
 
+        {/* Onglets de navigation du panel administrateur */}
         <AdminNavigationTabs items={navigationTabs} />
 
+        {/* Contenu de l'onglet Aperçu */}
         {activeTab === 'Aperçu' ? (
           <>
+            {/* Grille des cartes statistiques */}
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {stats.map((item) => (
                 <DashboardCard
@@ -265,12 +332,14 @@ const AdminPage = () => {
               ))}
             </section>
 
+            {/* Section des actions rapides */}
             <section className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-slate-900">Actions rapides</h2>
                   <p className="text-sm text-slate-500">Créez du contenu ou gérez les apprenants en un clic.</p>
                 </div>
+                {/* Bouton d'historique */}
                 <button
                   type="button"
                   className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-primary hover:text-primary"
@@ -278,6 +347,7 @@ const AdminPage = () => {
                   Historique
                 </button>
               </div>
+              {/* Liste des boutons d'actions rapides */}
               <div className="flex flex-wrap gap-4">
                 {quickActions.map((action) => (
                   <QuickActionButton
@@ -293,6 +363,7 @@ const AdminPage = () => {
           </>
         ) : null}
 
+        {/* Contenu de l'onglet Programmes */}
         {activeTab === 'Programmes' ? (
           <section className="flex flex-col gap-6">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -354,6 +425,7 @@ const AdminPage = () => {
           </section>
         ) : null}
 
+        {/* Contenu de l'onglet Modules */}
         {activeTab === 'Modules' ? (
           <section className="flex flex-col gap-6">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -418,9 +490,85 @@ const AdminPage = () => {
           </section>
         ) : null}
 
+        {/* Contenu de l'onglet Apprenants */}
+        {activeTab === 'Apprenants' ? (
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Gestion des Apprenants</h2>
+                <p className="text-sm text-slate-500">
+                  Visualisez la progression de vos apprenants et planifiez les prochaines étapes de leur accompagnement.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+              >
+                <span className="text-base text-white">
+                  <IconPlus />
+                </span>
+                Nouvel Apprenant
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {learners.map((learner) => (
+                <article
+                  key={learner.email}
+                  className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center lg:justify-between"
+                >
+                  <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-light/60 text-lg font-semibold text-primary">
+                      {learner.name
+                        .split(' ')
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join('')}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+                        <h3 className="text-lg font-semibold text-slate-900">{learner.name}</h3>
+                        <span className="text-sm font-medium text-primary">{learner.handle}</span>
+                      </div>
+                      <p className="text-sm text-slate-500">{learner.email}</p>
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 sm:text-sm">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.programme}</span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+                          {learner.modulesCompleted} / {learner.totalModules} modules
+                        </span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.lastActivity}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-primary hover:text-primary"
+                    >
+                      <span className="text-base text-slate-400">
+                        <IconEdit />
+                      </span>
+                      Suivi
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+                    >
+                      Consulter
+                      <span className="text-base text-white">
+                        <IconArrowUpRight />
+                      </span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </section>
     </AdminLayout>
   );
 };
 
+// Exportation par défaut du composant
 export default AdminPage;
