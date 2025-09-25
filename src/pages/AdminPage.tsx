@@ -267,6 +267,37 @@ const AdminPage = () => {
     [],
   );
 
+  // Données des badges de reconnaissance
+  const badges = useMemo(
+    () => [
+      {
+        title: 'Premiers Pas',
+        description: 'Complète ton premier module',
+        condition: 'Complète n\'importe quel premier module de formation.',
+        category: 'progression',
+        rarity: 'commun',
+        points: 50,
+      },
+      {
+        title: 'Guerrier de la Semaine',
+        description: 'Connecte-toi 7 jours consécutifs',
+        condition: 'Maintiens une activité quotidienne pendant une semaine.',
+        category: 'engagement',
+        rarity: 'rare',
+        points: 100,
+      },
+      {
+        title: 'Score Parfait',
+        description: 'Obtiens 20/20 à un examen',
+        condition: 'Réussis une évaluation avec un score parfait.',
+        category: 'académique',
+        rarity: 'épique',
+        points: 150,
+      },
+    ],
+    [],
+  );
+
   // Données des apprenants
   const learners = useMemo(
     () => [
@@ -549,6 +580,80 @@ const AdminPage = () => {
                         <IconEdit />
                       </span>
                       Suivi
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+                    >
+                      Consulter
+                      <span className="text-base text-white">
+                        <IconArrowUpRight />
+                      </span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {/* Contenu de l'onglet Badges */}
+        {activeTab === 'Badges' ? (
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Gestion des Badges</h2>
+                <p className="text-sm text-slate-500">
+                  Créez de nouveaux badges de reconnaissance et suivez leur attribution au sein de la communauté.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
+              >
+                <span className="text-base text-white">
+                  <IconPlus />
+                </span>
+                Nouveau Badge
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {badges.map((badge) => (
+                <article
+                  key={badge.title}
+                  className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-center lg:justify-between"
+                >
+                  <div className="flex flex-1 items-start gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light text-primary">
+                      <IconBadge />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900">{badge.title}</h3>
+                          <p className="text-sm text-slate-500">{badge.description}</p>
+                        </div>
+                        <span className="inline-flex items-center rounded-full bg-primary-light/60 px-4 py-1 text-sm font-semibold uppercase tracking-wide text-primary">
+                          {badge.points} points
+                        </span>
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 sm:text-sm">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{badge.category}</span>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{badge.rarity}</span>
+                      </div>
+                      <p className="mt-3 text-sm text-slate-500">Condition : {badge.condition}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-primary hover:text-primary"
+                    >
+                      <span className="text-base text-slate-400">
+                        <IconEdit />
+                      </span>
+                      Modifier
                     </button>
                     <button
                       type="button"
