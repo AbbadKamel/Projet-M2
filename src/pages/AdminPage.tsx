@@ -117,6 +117,8 @@ const IconPlus = () => (
   return (
     <AdminLayout>
       <section className="flex flex-col gap-8">
+        <AdminNavigationTabs items={navigationTabs} />
+
 
         <header>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">Aperçu</p>
