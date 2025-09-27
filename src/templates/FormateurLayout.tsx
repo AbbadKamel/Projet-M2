@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
+import SignOutButton from '../components/SignOutButton';
 
 const FormateurLayout = ({ children }: PropsWithChildren) => {
   return (
@@ -60,6 +61,7 @@ const FormateurLayout = ({ children }: PropsWithChildren) => {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-semibold text-white">
               SM
             </div>
+            <SignOutButton />
           </div>
         </div>
       </header>
