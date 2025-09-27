@@ -4,6 +4,7 @@ import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
 import UpcomingCourseCard from '../components/UpcomingCourseCard';
 import FormateurLayout from '../templates/FormateurLayout';
+import { useAuth } from '../auth/AuthContext';
 
 const IconOverview = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -145,6 +146,9 @@ const IconClipboard = () => (
 
 const FormateurPage = () => {
   const [activeTab, setActiveTab] = useState('Aperçu');
+  const { user } = useAuth();
+  const displayName = user?.displayName ?? 'Formateur';
+  const firstName = displayName.trim().split(/\s+/)[0] || displayName;
 
   const navigationTabs = useMemo(
     () => [
@@ -190,12 +194,12 @@ const FormateurPage = () => {
     }
 
     return {
-      eyebrow: 'Bonjour Sophie',
+      eyebrow: `Bonjour ${firstName}`,
       title: 'Espace Formateur',
       description:
         'Retrouvez vos indicateurs clés, vos prochaines sessions et accédez rapidement aux actions les plus fréquentes pour vos apprenants.',
     } as const;
-  }, [activeTab]);
+  }, [activeTab, firstName]);
 
   const stats = useMemo(
     () => [

@@ -1,7 +1,21 @@
 import type { PropsWithChildren } from 'react';
-import { Link } from 'react-router-dom';
+import SignOutButton from '../components/SignOutButton';
+import { useAuth } from '../auth/AuthContext';
+
+const getInitials = (label: string) =>
+  label
+    .trim()
+    .split(/\s+/)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('')
+    .slice(0, 2) || 'AD';
 
 const AdminLayout = ({ children }: PropsWithChildren) => {
+  const { user } = useAuth();
+  const displayName = user?.displayName ?? 'Administrateur';
+  const email = user?.email ?? 'admin@unicaen.fr';
+  const initials = getInitials(displayName);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
@@ -13,25 +27,21 @@ const AdminLayout = ({ children }: PropsWithChildren) => {
               <span className="text-sm text-slate-500">Panel Administrateur</span>
             </div>
           </div>
-          <nav className="flex items-center gap-6 text-sm font-medium text-slate-500">
-            <Link className="rounded-full px-4 py-2 transition hover:text-primary" to="#">
-              Apprenant
-            </Link>
-            <Link className="hover:text-primary" to="/formateur">
-              Formateur
-            </Link>
-            <Link className="rounded-full bg-primary-light px-4 py-2 text-primary" to="/admin">
-              Admin
-            </Link>
-          </nav>
+          <div className="flex items-center gap-2 rounded-full bg-primary-light px-4 py-2 text-sm font-semibold text-primary">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white">
+              {initials}
+            </span>
+            <span>{displayName}</span>
+          </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-sm font-semibold text-slate-900">Jean Administrateur</p>
-              <p className="text-xs text-slate-500">Administrateur</p>
+              <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+              <p className="text-xs text-slate-500">{email}</p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-white font-semibold">
-              JA
+              {initials}
             </div>
+            <SignOutButton />
           </div>
         </div>
       </header>
