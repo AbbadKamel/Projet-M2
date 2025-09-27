@@ -138,6 +138,7 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('Aperçu');
   const [isAddLearnerModalOpen, setIsAddLearnerModalOpen] = useState(false);
   const [isAddModuleModalOpen, setIsAddModuleModalOpen] = useState(false);
+
   const [newLearner, setNewLearner] = useState({
     firstName: '',
     lastName: '',
@@ -155,6 +156,7 @@ const AdminPage = () => {
     prerequisites: '',
     objectives: '',
   });
+
 
   type Learner = {
     name: string;
@@ -261,6 +263,7 @@ const AdminPage = () => {
           setActiveTab('Modules');
           setIsAddModuleModalOpen(true);
         },
+
       },
       {
         label: 'Nouvel Apprenant',
@@ -279,6 +282,7 @@ const AdminPage = () => {
       },
     ],
     [setActiveTab, setIsAddLearnerModalOpen, setIsAddModuleModalOpen],
+
   );
 
   // Données des programmes de formation
@@ -460,6 +464,7 @@ const AdminPage = () => {
     setIsAddModuleModalOpen(false);
     resetModuleForm();
   };
+
 
   const handleInputChange = (field: 'firstName' | 'lastName' | 'email', value: string) => {
     setNewLearner((prev) => ({
