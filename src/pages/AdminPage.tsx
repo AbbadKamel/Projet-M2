@@ -735,8 +735,8 @@ const AdminPage = () => {
 
         {isAddModuleModalOpen ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-xl">
-              <div className="flex items-start justify-between">
+            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between sticky top-0 bg-white pb-4 border-b border-slate-100 mb-4">
                 <div>
                   <h3 className="text-xl font-semibold text-slate-900">Créer un Module</h3>
                   <p className="mt-1 text-sm text-slate-500">
@@ -768,102 +768,108 @@ const AdminPage = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleAddModule} className="mt-6 flex flex-col gap-5">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                    Titre *
-                    <input
-                      type="text"
-                      value={newModule.title}
-                      onChange={(event) => handleModuleChange('title', event.target.value)}
-                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                      placeholder="Ex. Interface utilisateur avancée"
-                      required
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                    Programme
-                    <select
-                      value={newModule.programme}
-                      onChange={(event) => handleModuleChange('programme', event.target.value)}
-                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    >
-                      <option value="Aucun programme">Aucun programme</option>
-                      <option value="Programme Développement Frontend">Programme Développement Frontend</option>
-                      <option value="Programme Développement Backend">Programme Développement Backend</option>
-                      <option value="Programme Data Analyst">Programme Data Analyst</option>
-                    </select>
-                  </label>
+              <form onSubmit={handleAddModule} className="flex flex-col gap-4">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <div className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                        Titre *
+                        <input
+                          type="text"
+                          value={newModule.title}
+                          onChange={(event) => handleModuleChange('title', event.target.value)}
+                          className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                          placeholder="Ex. Interface utilisateur avancée"
+                          required
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                        Programme
+                        <select
+                          value={newModule.programme}
+                          onChange={(event) => handleModuleChange('programme', event.target.value)}
+                          className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        >
+                          <option value="Aucun programme">Aucun programme</option>
+                          <option value="Programme Développement Frontend">Programme Développement Frontend</option>
+                          <option value="Programme Développement Backend">Programme Développement Backend</option>
+                          <option value="Programme Data Analyst">Programme Data Analyst</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                        Catégorie
+                        <input
+                          type="text"
+                          value={newModule.category}
+                          onChange={(event) => handleModuleChange('category', event.target.value)}
+                          className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                          placeholder="Ex. Frontend, Backend"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                        Difficulté
+                        <select
+                          value={newModule.difficulty}
+                          onChange={(event) => handleModuleChange('difficulty', event.target.value)}
+                          className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        >
+                          <option value="Débutant">Débutant</option>
+                          <option value="Intermédiaire">Intermédiaire</option>
+                          <option value="Avancé">Avancé</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Durée (heures)
+                      <input
+                        type="number"
+                        min="0"
+                        value={newModule.duration}
+                        onChange={(event) => handleModuleChange('duration', event.target.value)}
+                        className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        placeholder="0"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Description
+                      <textarea
+                        value={newModule.description}
+                        onChange={(event) => handleModuleChange('description', event.target.value)}
+                        className="h-20 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                        placeholder="Décrivez les objectifs généraux du module"
+                      />
+                    </label>
+
+                    <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Prérequis (un par ligne)
+                      <textarea
+                        value={newModule.prerequisites}
+                        onChange={(event) => handleModuleChange('prerequisites', event.target.value)}
+                        className="h-20 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                        placeholder={'Connaissances HTML de base\nNotions de CSS'}
+                      />
+                    </label>
+
+                    <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Objectifs pédagogiques (un par ligne)
+                      <textarea
+                        value={newModule.objectives}
+                        onChange={(event) => handleModuleChange('objectives', event.target.value)}
+                        className="h-20 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                        placeholder={'Maîtriser les composants React\nComprendre les hooks'}
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                  Description
-                  <textarea
-                    value={newModule.description}
-                    onChange={(event) => handleModuleChange('description', event.target.value)}
-                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="Décrivez les objectifs généraux du module"
-                  />
-                </label>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                    Catégorie
-                    <input
-                      type="text"
-                      value={newModule.category}
-                      onChange={(event) => handleModuleChange('category', event.target.value)}
-                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                      placeholder="Ex. Frontend, Backend"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                    Difficulté
-                    <select
-                      value={newModule.difficulty}
-                      onChange={(event) => handleModuleChange('difficulty', event.target.value)}
-                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    >
-                      <option value="Débutant">Débutant</option>
-                      <option value="Intermédiaire">Intermédiaire</option>
-                      <option value="Avancé">Avancé</option>
-                    </select>
-                  </label>
-                </div>
-
-                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                  Durée (heures)
-                  <input
-                    type="number"
-                    min="0"
-                    value={newModule.duration}
-                    onChange={(event) => handleModuleChange('duration', event.target.value)}
-                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="0"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                  Prérequis (un par ligne)
-                  <textarea
-                    value={newModule.prerequisites}
-                    onChange={(event) => handleModuleChange('prerequisites', event.target.value)}
-                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder={'Connaissances HTML de base\nNotions de CSS'}
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                  Objectifs pédagogiques (un par ligne)
-                  <textarea
-                    value={newModule.objectives}
-                    onChange={(event) => handleModuleChange('objectives', event.target.value)}
-                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder={'Maîtriser les composants React\nComprendre les hooks'}
-                  />
-                </label>
-
-                <div className="flex items-center justify-end gap-3">
+                <div className="flex items-center justify-end gap-3 sticky bottom-0 bg-white pt-4 border-t border-slate-100 mt-4">
                   <button
                     type="button"
                     onClick={closeModuleModal}
