@@ -1,8 +1,22 @@
 import type { PropsWithChildren } from 'react';
-import { Link } from 'react-router-dom';
 import SignOutButton from '../components/SignOutButton';
+import { useAuth } from '../auth/AuthContext';
+
+const getInitials = (label: string) =>
+  label
+    .trim()
+    .split(/\s+/)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('')
+    .slice(0, 2) || 'FO';
+
 
 const FormateurLayout = ({ children }: PropsWithChildren) => {
+  const { user } = useAuth();
+  const displayName = user?.displayName ?? 'Formateur';
+  const email = user?.email ?? 'formateur@unicaen.fr';
+  const initials = getInitials(displayName);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-white">
       <header className="border-b border-amber-100 bg-white/80 backdrop-blur">
@@ -17,26 +31,12 @@ const FormateurLayout = ({ children }: PropsWithChildren) => {
             </div>
           </div>
 
-          <nav className="hidden items-center gap-3 text-sm font-medium text-slate-500 md:flex">
-            <Link
-              to="/apprenant"
-              className="rounded-full px-4 py-2 transition hover:text-primary"
-            >
-              Apprenant
-            </Link>
-            <Link
-              to="/formateur"
-              className="rounded-full bg-primary px-4 py-2 text-white shadow transition hover:shadow-md"
-            >
-              Formateur
-            </Link>
-            <Link
-              to="/admin"
-              className="rounded-full px-4 py-2 transition hover:text-primary"
-            >
-              Admin
-            </Link>
-          </nav>
+          <div className="hidden items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary md:flex">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white">
+              {initials}
+            </span>
+            <span>{displayName}</span>
+          </div>
 
           <div className="flex items-center gap-3">
             <button
@@ -55,11 +55,11 @@ const FormateurLayout = ({ children }: PropsWithChildren) => {
               </svg>
             </button>
             <div className="text-right">
-              <p className="text-sm font-semibold text-slate-900">Sophie Martin</p>
-              <p className="text-xs text-amber-600">Formatrice</p>
+              <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+              <p className="text-xs text-amber-600">{email}</p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-semibold text-white">
-              SM
+              {initials}
             </div>
             <SignOutButton />
           </div>
