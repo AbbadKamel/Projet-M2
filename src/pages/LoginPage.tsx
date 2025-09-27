@@ -1,36 +1,38 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { USERS } from '../auth/users';
 
-const USERS = [
-  {
-    email: 'admin@unicaen.fr',
-    password: 'admin',
-    roleLabel: 'Administrateur',
-    redirectPath: '/admin',
-  },
-];
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { signIn, user } = useAuth();
 
-  const availableRoles = useMemo(() => USERS.map((user) => user.roleLabel), []);
+  const availableRoles = useMemo(() => USERS.map((account) => account.displayName), []);
+
+  useEffect(() => {
+    if (user) {
+      navigate(user.redirectPath, { replace: true });
+    }
+  }, [navigate, user]);
+
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const trimmedEmail = email.trim().toLowerCase();
-    const matchingUser = USERS.find((user) => user.email.toLowerCase() === trimmedEmail);
+    const result = signIn(email, password);
 
-    if (!matchingUser || matchingUser.password !== password) {
-      setError('Identifiants incorrects. Veuillez vérifier votre adresse e-mail et votre mot de passe.');
+    if (!result.success) {
+      setError(result.error);
+
       return;
     }
 
     setError('');
-    navigate(matchingUser.redirectPath, { replace: true });
+
   };
 
   return (
@@ -42,7 +44,8 @@ const LoginPage = () => {
           </div>
           <h1 className="text-3xl font-semibold text-slate-900">Connexion</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Accédez à votre espace {availableRoles.join(', ').toLowerCase()} avec vos identifiants.
+            Accédez à votre espace {availableRoles.join(', ')} avec vos identifiants.
+
           </p>
         </div>
 
@@ -94,7 +97,9 @@ const LoginPage = () => {
         </form>
 
         <p className="mt-8 text-center text-xs text-slate-400">
-          Pour le moment, seul l&apos;accès administrateur est disponible.
+          Comptes disponibles :{' '}
+          {USERS.map((account) => `${account.email} / ${account.password}`).join(' • ')}.
+
         </p>
       </div>
     </div>
