@@ -10,6 +10,7 @@ const getInitials = (label: string) =>
     .join('')
     .slice(0, 2) || 'FO';
 
+
 const FormateurLayout = ({ children }: PropsWithChildren) => {
   const { user } = useAuth();
   const displayName = user?.displayName ?? 'Formateur';

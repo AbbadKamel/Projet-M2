@@ -16,6 +16,7 @@ const ApprenantPage = () => {
   const initials = getInitials(displayName);
   const firstName = displayName.trim().split(/\s+/)[0] || displayName;
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-100 py-20">
       <div className="mx-auto max-w-4xl rounded-3xl bg-white/80 px-10 py-12 shadow-xl backdrop-blur">
@@ -40,6 +41,7 @@ const ApprenantPage = () => {
             <SignOutButton />
           </div>
         </div>
+
       </div>
     </div>
   );

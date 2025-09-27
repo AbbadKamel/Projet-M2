@@ -10,6 +10,7 @@ const getInitials = (label: string) =>
     .join('')
     .slice(0, 2) || 'AD';
 
+
 const AdminLayout = ({ children }: PropsWithChildren) => {
   const { user } = useAuth();
   const displayName = user?.displayName ?? 'Administrateur';
