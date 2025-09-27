@@ -137,12 +137,26 @@ const AdminPage = () => {
   // État pour gérer l'onglet actif
   const [activeTab, setActiveTab] = useState('Aperçu');
   const [isAddLearnerModalOpen, setIsAddLearnerModalOpen] = useState(false);
+  const [isAddModuleModalOpen, setIsAddModuleModalOpen] = useState(false);
+
   const [newLearner, setNewLearner] = useState({
     firstName: '',
     lastName: '',
     email: '',
     modules: [] as string[],
   });
+
+  const [newModule, setNewModule] = useState({
+    title: '',
+    programme: 'Aucun programme',
+    description: '',
+    category: '',
+    difficulty: 'Débutant',
+    duration: '',
+    prerequisites: '',
+    objectives: '',
+  });
+
 
   type Learner = {
     name: string;
@@ -160,7 +174,15 @@ const AdminPage = () => {
     () => [
       { label: 'Aperçu', icon: <IconOverview />, active: activeTab === 'Aperçu', onClick: () => setActiveTab('Aperçu') },
       { label: 'Programmes', icon: <IconStack />, active: activeTab === 'Programmes', onClick: () => setActiveTab('Programmes') },
-      { label: 'Modules', icon: <IconModule />, active: activeTab === 'Modules', onClick: () => setActiveTab('Modules') },
+      {
+        label: 'Modules',
+        icon: <IconModule />,
+        active: activeTab === 'Modules',
+        onClick: () => {
+          setActiveTab('Modules');
+          setIsAddModuleModalOpen(false);
+        },
+      },
       { label: 'Apprenants', icon: <IconUsers />, active: activeTab === 'Apprenants', onClick: () => setActiveTab('Apprenants') },
       { label: 'Badges', icon: <IconBookmarks />, active: activeTab === 'Badges', onClick: () => setActiveTab('Badges') },
     ],
@@ -237,7 +259,11 @@ const AdminPage = () => {
         label: 'Nouveau Module',
         description: 'Ajouter un module de formation',
         icon: <IconPlus />,
-        onClick: () => setActiveTab('Modules'),
+        onClick: () => {
+          setActiveTab('Modules');
+          setIsAddModuleModalOpen(true);
+        },
+
       },
       {
         label: 'Nouvel Apprenant',
@@ -255,7 +281,8 @@ const AdminPage = () => {
         onClick: () => setActiveTab('Badges'),
       },
     ],
-    [setActiveTab, setIsAddLearnerModalOpen],
+    [setActiveTab, setIsAddLearnerModalOpen, setIsAddModuleModalOpen],
+
   );
 
   // Données des programmes de formation
@@ -278,35 +305,43 @@ const AdminPage = () => {
   );
 
   // Données des modules de formation
-  const modules = useMemo(
-    () => [
-      {
-        title: 'Les Bases de React',
-        description: 'Apprends les fondamentaux de React pour créer des interfaces utilisateur modernes',
-        level: 'Débutant',
-        duration: '4h',
-        category: 'Frontend',
-        programme: 'Programme Développement Frontend',
-      },
-      {
-        title: 'JavaScript Avancé',
-        description: 'Maîtrise les concepts avancés de JavaScript pour devenir un développeur expert',
-        level: 'Avancé',
-        duration: '6h',
-        category: 'Programmation',
-        programme: 'Programme Développement Frontend',
-      },
-      {
-        title: 'Maîtrise CSS',
-        description: 'Deviens expert en CSS et animations pour créer des interfaces époustouflantes',
-        level: 'Intermédiaire',
-        duration: '5h',
-        category: 'Frontend',
-        programme: 'Programme Développement Frontend',
-      },
-    ],
-    [],
-  );
+  type Module = {
+    title: string;
+    description: string;
+    level: string;
+    duration: string;
+    category: string;
+    programme: string;
+    prerequisites?: string[];
+    objectives?: string[];
+  };
+
+  const [modules, setModules] = useState<Module[]>([
+    {
+      title: 'Les Bases de React',
+      description: 'Apprends les fondamentaux de React pour créer des interfaces utilisateur modernes',
+      level: 'Débutant',
+      duration: '4h',
+      category: 'Frontend',
+      programme: 'Programme Développement Frontend',
+    },
+    {
+      title: 'JavaScript Avancé',
+      description: 'Maîtrise les concepts avancés de JavaScript pour devenir un développeur expert',
+      level: 'Avancé',
+      duration: '6h',
+      category: 'Programmation',
+      programme: 'Programme Développement Frontend',
+    },
+    {
+      title: 'Maîtrise CSS',
+      description: 'Deviens expert en CSS et animations pour créer des interfaces époustouflantes',
+      level: 'Intermédiaire',
+      duration: '5h',
+      category: 'Frontend',
+      programme: 'Programme Développement Frontend',
+    },
+  ]);
 
   // Données des badges de reconnaissance
   const badges = useMemo(
@@ -371,6 +406,65 @@ const AdminPage = () => {
   ]);
 
   const availableModules = useMemo(() => modules.map((module) => module.title), [modules]);
+
+  const handleModuleChange = (field: keyof typeof newModule, value: string) => {
+    setNewModule((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const resetModuleForm = () => {
+    setNewModule({
+      title: '',
+      programme: 'Aucun programme',
+      description: '',
+      category: '',
+      difficulty: 'Débutant',
+      duration: '',
+      prerequisites: '',
+      objectives: '',
+    });
+  };
+
+  const handleAddModule = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!newModule.title.trim()) {
+      return;
+    }
+
+    const prerequisites = newModule.prerequisites
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const objectives = newModule.objectives
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const moduleToAdd: Module = {
+      title: newModule.title.trim(),
+      programme: newModule.programme || 'Aucun programme',
+      description: newModule.description.trim() || 'Aucune description fournie pour le moment.',
+      level: newModule.difficulty || 'Débutant',
+      duration: newModule.duration ? `${newModule.duration}h` : '0h',
+      category: newModule.category.trim() || 'Non classé',
+      prerequisites: prerequisites.length ? prerequisites : undefined,
+      objectives: objectives.length ? objectives : undefined,
+    };
+
+    setModules((prev) => [moduleToAdd, ...prev]);
+    setIsAddModuleModalOpen(false);
+    resetModuleForm();
+  };
+
+  const closeModuleModal = () => {
+    setIsAddModuleModalOpen(false);
+    resetModuleForm();
+  };
+
 
   const handleInputChange = (field: 'firstName' | 'lastName' | 'email', value: string) => {
     setNewLearner((prev) => ({
@@ -500,6 +594,7 @@ const AdminPage = () => {
               </div>
               <button
                 type="button"
+                onClick={() => setIsAddModuleModalOpen(true)}
                 className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
               >
                 <span className="text-base text-white">
@@ -564,6 +659,7 @@ const AdminPage = () => {
               </div>
               <button
                 type="button"
+                onClick={() => setIsAddModuleModalOpen(true)}
                 className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
               >
                 <span className="text-base text-white">
@@ -590,6 +686,26 @@ const AdminPage = () => {
                       <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{module.category}</span>
                       <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{module.programme}</span>
                     </div>
+                    {module.prerequisites?.length ? (
+                      <div className="mt-4">
+                        <h4 className="text-sm font-semibold text-slate-900">Prérequis</h4>
+                        <ul className="mt-2 list-inside list-disc text-sm text-slate-600">
+                          {module.prerequisites.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                    {module.objectives?.length ? (
+                      <div className="mt-4">
+                        <h4 className="text-sm font-semibold text-slate-900">Objectifs pédagogiques</h4>
+                        <ul className="mt-2 list-inside list-disc text-sm text-slate-600">
+                          {module.objectives.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
                   <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
                     <button
@@ -615,6 +731,157 @@ const AdminPage = () => {
               ))}
             </div>
           </section>
+        ) : null}
+
+        {isAddModuleModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900">Créer un Module</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Renseignez les informations pédagogiques pour ajouter un nouveau module au catalogue.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeModuleModal}
+                  className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                  aria-label="Fermer la fenêtre de création de module"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M15.8334 4.1665L4.16669 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M4.16669 4.1665L15.8334 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleAddModule} className="mt-6 flex flex-col gap-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Titre *
+                    <input
+                      type="text"
+                      value={newModule.title}
+                      onChange={(event) => handleModuleChange('title', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      placeholder="Ex. Interface utilisateur avancée"
+                      required
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Programme
+                    <select
+                      value={newModule.programme}
+                      onChange={(event) => handleModuleChange('programme', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    >
+                      <option value="Aucun programme">Aucun programme</option>
+                      <option value="Programme Développement Frontend">Programme Développement Frontend</option>
+                      <option value="Programme Développement Backend">Programme Développement Backend</option>
+                      <option value="Programme Data Analyst">Programme Data Analyst</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Description
+                  <textarea
+                    value={newModule.description}
+                    onChange={(event) => handleModuleChange('description', event.target.value)}
+                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder="Décrivez les objectifs généraux du module"
+                  />
+                </label>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Catégorie
+                    <input
+                      type="text"
+                      value={newModule.category}
+                      onChange={(event) => handleModuleChange('category', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      placeholder="Ex. Frontend, Backend"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Difficulté
+                    <select
+                      value={newModule.difficulty}
+                      onChange={(event) => handleModuleChange('difficulty', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    >
+                      <option value="Débutant">Débutant</option>
+                      <option value="Intermédiaire">Intermédiaire</option>
+                      <option value="Avancé">Avancé</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Durée (heures)
+                  <input
+                    type="number"
+                    min="0"
+                    value={newModule.duration}
+                    onChange={(event) => handleModuleChange('duration', event.target.value)}
+                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder="0"
+                  />
+                </label>
+
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Prérequis (un par ligne)
+                  <textarea
+                    value={newModule.prerequisites}
+                    onChange={(event) => handleModuleChange('prerequisites', event.target.value)}
+                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder={'Connaissances HTML de base\nNotions de CSS'}
+                  />
+                </label>
+
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Objectifs pédagogiques (un par ligne)
+                  <textarea
+                    value={newModule.objectives}
+                    onChange={(event) => handleModuleChange('objectives', event.target.value)}
+                    className="min-h-[96px] rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder={'Maîtriser les composants React\nComprendre les hooks'}
+                  />
+                </label>
+
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeModuleModal}
+                    className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-700"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-slate-300"
+                    disabled={!newModule.title.trim()}
+                  >
+                    Créer le Module
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         ) : null}
 
         {/* Contenu de l'onglet Apprenants */}
