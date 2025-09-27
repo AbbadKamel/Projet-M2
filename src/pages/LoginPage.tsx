@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { USERS } from '../auth/users';
 
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ const LoginPage = () => {
     }
   }, [navigate, user]);
 
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -25,10 +27,12 @@ const LoginPage = () => {
 
     if (!result.success) {
       setError(result.error);
+
       return;
     }
 
     setError('');
+
   };
 
   return (
@@ -41,6 +45,7 @@ const LoginPage = () => {
           <h1 className="text-3xl font-semibold text-slate-900">Connexion</h1>
           <p className="mt-2 text-sm text-slate-500">
             Accédez à votre espace {availableRoles.join(', ')} avec vos identifiants.
+
           </p>
         </div>
 
@@ -94,6 +99,7 @@ const LoginPage = () => {
         <p className="mt-8 text-center text-xs text-slate-400">
           Comptes disponibles :{' '}
           {USERS.map((account) => `${account.email} / ${account.password}`).join(' • ')}.
+
         </p>
       </div>
     </div>

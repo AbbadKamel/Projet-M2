@@ -5,6 +5,7 @@ import FormateurPage from '../pages/FormateurPage';
 import LoginPage from '../pages/LoginPage';
 import RequireAuth from './RequireAuth';
 
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -33,6 +34,7 @@ const AppRoutes = () => {
           </RequireAuth>
         }
       />
+
       <Route path="" element={<Navigate to="login" replace />} />
       <Route path="*" element={<Navigate to="login" replace />} />
     </Routes>

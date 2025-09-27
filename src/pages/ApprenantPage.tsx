@@ -1,5 +1,6 @@
 import SignOutButton from '../components/SignOutButton';
 
+
 const ApprenantPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-100 py-20">
@@ -16,6 +17,7 @@ const ApprenantPage = () => {
             <SignOutButton />
           </div>
         </div>
+
       </div>
     </div>
   );
