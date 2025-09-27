@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
+import SignOutButton from '../components/SignOutButton';
 
 const AdminLayout = ({ children }: PropsWithChildren) => {
   return (
@@ -32,6 +33,7 @@ const AdminLayout = ({ children }: PropsWithChildren) => {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-white font-semibold">
               JA
             </div>
+            <SignOutButton />
           </div>
         </div>
       </header>
