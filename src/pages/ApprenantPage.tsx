@@ -16,6 +16,7 @@ const ApprenantPage = () => {
             <SignOutButton />
           </div>
         </div>
+
       </div>
     </div>
   );
