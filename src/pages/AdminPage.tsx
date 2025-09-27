@@ -1,5 +1,5 @@
 // Importation des hooks React et des composants nécessaires
-import { useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import AdminNavigationTabs from '../components/AdminNavigationTabs';
 import DashboardCard from '../components/DashboardCard';
 import QuickActionButton from '../components/QuickActionButton';
@@ -136,6 +136,24 @@ const IconEdit = () => (
 const AdminPage = () => {
   // État pour gérer l'onglet actif
   const [activeTab, setActiveTab] = useState('Aperçu');
+  const [isAddLearnerModalOpen, setIsAddLearnerModalOpen] = useState(false);
+  const [newLearner, setNewLearner] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    modules: [] as string[],
+  });
+
+  type Learner = {
+    name: string;
+    handle: string;
+    email: string;
+    programme?: string;
+    modulesCompleted?: number;
+    totalModules?: number;
+    lastActivity?: string;
+    modulesToEnroll?: string[];
+  };
 
   // Configuration des onglets de navigation avec mémorisation pour optimiser les performances
   const navigationTabs = useMemo(
@@ -209,12 +227,35 @@ const AdminPage = () => {
   // Configuration des boutons d'actions rapides
   const quickActions = useMemo(
     () => [
-      { label: 'Nouveau Programme', description: 'Créer un nouveau parcours de formation', icon: <IconPlus /> },
-      { label: 'Nouveau Module', description: 'Ajouter un module de formation', icon: <IconPlus /> },
-      { label: 'Nouvel Apprenant', description: 'Inscrire un nouvel apprenant', icon: <IconPlus /> },
-      { label: 'Nouveau Badge', description: 'Créer un badge de reconnaissance', icon: <IconPlus /> },
+      {
+        label: 'Nouveau Programme',
+        description: 'Créer un nouveau parcours de formation',
+        icon: <IconPlus />,
+        onClick: () => setActiveTab('Programmes'),
+      },
+      {
+        label: 'Nouveau Module',
+        description: 'Ajouter un module de formation',
+        icon: <IconPlus />,
+        onClick: () => setActiveTab('Modules'),
+      },
+      {
+        label: 'Nouvel Apprenant',
+        description: 'Inscrire un nouvel apprenant',
+        icon: <IconPlus />,
+        onClick: () => {
+          setActiveTab('Apprenants');
+          setIsAddLearnerModalOpen(true);
+        },
+      },
+      {
+        label: 'Nouveau Badge',
+        description: 'Créer un badge de reconnaissance',
+        icon: <IconPlus />,
+        onClick: () => setActiveTab('Badges'),
+      },
     ],
-    [],
+    [setActiveTab, setIsAddLearnerModalOpen],
   );
 
   // Données des programmes de formation
@@ -299,38 +340,93 @@ const AdminPage = () => {
   );
 
   // Données des apprenants
-  const learners = useMemo(
-    () => [
-      {
-        name: 'Marie Dubois',
-        handle: '@mariedubois',
-        email: 'marie.dubois@laruche.fr',
-        programme: 'Parcours UX Design',
-        modulesCompleted: 4,
-        totalModules: 6,
-        lastActivity: 'Il y a 2 heures',
-      },
-      {
-        name: 'Thomas Lévy',
-        handle: '@thomaslevy',
-        email: 'thomas.levy@laruche.fr',
-        programme: 'Programme Développement Backend',
-        modulesCompleted: 3,
-        totalModules: 5,
-        lastActivity: 'Hier',
-      },
-      {
-        name: 'Emma Bernard',
-        handle: '@emma.bernard',
-        email: 'emma.bernard@laruche.fr',
-        programme: 'Programme Data Analyst',
-        modulesCompleted: 5,
-        totalModules: 7,
-        lastActivity: 'Il y a 3 jours',
-      },
-    ],
-    [],
-  );
+  const [learners, setLearners] = useState<Learner[]>([
+    {
+      name: 'Marie Dubois',
+      handle: '@mariedubois',
+      email: 'marie.dubois@laruche.fr',
+      programme: 'Parcours UX Design',
+      modulesCompleted: 4,
+      totalModules: 6,
+      lastActivity: 'Il y a 2 heures',
+    },
+    {
+      name: 'Thomas Lévy',
+      handle: '@thomaslevy',
+      email: 'thomas.levy@laruche.fr',
+      programme: 'Programme Développement Backend',
+      modulesCompleted: 3,
+      totalModules: 5,
+      lastActivity: 'Hier',
+    },
+    {
+      name: 'Emma Bernard',
+      handle: '@emma.bernard',
+      email: 'emma.bernard@laruche.fr',
+      programme: 'Programme Data Analyst',
+      modulesCompleted: 5,
+      totalModules: 7,
+      lastActivity: 'Il y a 3 jours',
+    },
+  ]);
+
+  const availableModules = useMemo(() => modules.map((module) => module.title), [modules]);
+
+  const handleInputChange = (field: 'firstName' | 'lastName' | 'email', value: string) => {
+    setNewLearner((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const toggleModuleSelection = (moduleTitle: string) => {
+    setNewLearner((prev) => {
+      const isSelected = prev.modules.includes(moduleTitle);
+      return {
+        ...prev,
+        modules: isSelected
+          ? prev.modules.filter((title) => title !== moduleTitle)
+          : [...prev.modules, moduleTitle],
+      };
+    });
+  };
+
+  const resetLearnerForm = () => {
+    setNewLearner({ firstName: '', lastName: '', email: '', modules: [] });
+  };
+
+  const handleAddLearner = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newLearner.firstName || !newLearner.lastName || !newLearner.email) {
+      return;
+    }
+
+    const name = `${newLearner.firstName.trim()} ${newLearner.lastName.trim()}`.trim();
+    const handle = `@${`${newLearner.firstName}${newLearner.lastName}`
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^a-zA-Z]/g, '')
+      .toLowerCase()}`;
+
+    const learnerToAdd: Learner = {
+      name,
+      handle,
+      email: newLearner.email.trim(),
+      modulesToEnroll: newLearner.modules,
+      modulesCompleted: 0,
+      totalModules: newLearner.modules.length,
+      lastActivity: "En attente d'inscription",
+    };
+
+    setLearners((prev) => [learnerToAdd, ...prev]);
+    setIsAddLearnerModalOpen(false);
+    resetLearnerForm();
+  };
+
+  const closeModal = () => {
+    setIsAddLearnerModalOpen(false);
+    resetLearnerForm();
+  };
 
   // Rendu du composant
   return (
@@ -386,7 +482,7 @@ const AdminPage = () => {
                     icon={action.icon}
                     label={action.label}
                     description={action.description}
-                    onClick={() => console.log(`${action.label} clicked`)}
+                    onClick={action.onClick}
                   />
                 ))}
               </div>
@@ -533,6 +629,7 @@ const AdminPage = () => {
               </div>
               <button
                 type="button"
+                onClick={() => setIsAddLearnerModalOpen(true)}
                 className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
               >
                 <span className="text-base text-white">
@@ -563,11 +660,25 @@ const AdminPage = () => {
                       </div>
                       <p className="text-sm text-slate-500">{learner.email}</p>
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 sm:text-sm">
-                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.programme}</span>
-                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
-                          {learner.modulesCompleted} / {learner.totalModules} modules
-                        </span>
-                        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.lastActivity}</span>
+                        {learner.programme ? (
+                          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.programme}</span>
+                        ) : null}
+                        {typeof learner.modulesCompleted === 'number' && typeof learner.totalModules === 'number' ? (
+                          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+                            {learner.modulesCompleted} / {learner.totalModules} modules
+                          </span>
+                        ) : null}
+                        {learner.modulesToEnroll?.length ? (
+                          <span className="rounded-full bg-primary-light/60 px-3 py-1 font-medium text-primary">Modules à inscrire</span>
+                        ) : null}
+                        {learner.modulesToEnroll?.map((module) => (
+                          <span key={module} className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">
+                            {module}
+                          </span>
+                        ))}
+                        {learner.lastActivity ? (
+                          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">{learner.lastActivity}</span>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -595,6 +706,120 @@ const AdminPage = () => {
               ))}
             </div>
           </section>
+        ) : null}
+
+        {isAddLearnerModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900">Ajouter un Apprenant</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Renseignez les informations de l'apprenant et sélectionnez les modules à inscrire.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                  aria-label="Fermer la fenêtre d'ajout"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M15.8334 4.1665L4.16669 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M4.16669 4.1665L15.8334 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleAddLearner} className="mt-6 flex flex-col gap-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Prénom *
+                    <input
+                      type="text"
+                      value={newLearner.firstName}
+                      onChange={(event) => handleInputChange('firstName', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      placeholder="Ex. Marie"
+                      required
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Nom *
+                    <input
+                      type="text"
+                      value={newLearner.lastName}
+                      onChange={(event) => handleInputChange('lastName', event.target.value)}
+                      className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      placeholder="Ex. Dubois"
+                      required
+                    />
+                  </label>
+                </div>
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Email *
+                  <input
+                    type="email"
+                    value={newLearner.email}
+                    onChange={(event) => handleInputChange('email', event.target.value)}
+                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder="exemple@laruche.fr"
+                    required
+                  />
+                </label>
+
+                <fieldset className="flex flex-col gap-3 rounded-2xl border border-slate-200 p-4">
+                  <legend className="px-2 text-sm font-semibold text-slate-900">Modules à inscrire</legend>
+                  {availableModules.map((moduleTitle) => {
+                    const isChecked = newLearner.modules.includes(moduleTitle);
+                    return (
+                      <label key={moduleTitle} className="flex items-center gap-3 text-sm text-slate-700">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleModuleSelection(moduleTitle)}
+                          className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                        />
+                        <span>{moduleTitle}</span>
+                      </label>
+                    );
+                  })}
+                  {!availableModules.length ? (
+                    <p className="text-sm text-slate-500">Aucun module disponible pour le moment.</p>
+                  ) : null}
+                </fieldset>
+
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-700"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-slate-300"
+                    disabled={!newLearner.firstName || !newLearner.lastName || !newLearner.email}
+                  >
+                    Ajouter l'Apprenant
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         ) : null}
 
         {/* Contenu de l'onglet Badges */}
