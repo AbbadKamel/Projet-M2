@@ -138,12 +138,18 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('Aperçu');
   const [isAddLearnerModalOpen, setIsAddLearnerModalOpen] = useState(false);
   const [isAddModuleModalOpen, setIsAddModuleModalOpen] = useState(false);
+  const [isAddProgrammeModalOpen, setIsAddProgrammeModalOpen] = useState(false);
 
   const [newLearner, setNewLearner] = useState({
     firstName: '',
     lastName: '',
     email: '',
     modules: [] as string[],
+  });
+
+  const [newProgramme, setNewProgramme] = useState({
+    title: '',
+    description: '',
   });
 
   const [newModule, setNewModule] = useState({
@@ -253,7 +259,10 @@ const AdminPage = () => {
         label: 'Nouveau Programme',
         description: 'Créer un nouveau parcours de formation',
         icon: <IconPlus />,
-        onClick: () => setActiveTab('Programmes'),
+        onClick: () => {
+          setActiveTab('Programmes');
+          setIsAddProgrammeModalOpen(true);
+        },
       },
       {
         label: 'Nouveau Module',
@@ -281,28 +290,32 @@ const AdminPage = () => {
         onClick: () => setActiveTab('Badges'),
       },
     ],
-    [setActiveTab, setIsAddLearnerModalOpen, setIsAddModuleModalOpen],
+    [setActiveTab, setIsAddLearnerModalOpen, setIsAddModuleModalOpen, setIsAddProgrammeModalOpen],
 
   );
 
   // Données des programmes de formation
-  const programmes = useMemo(
-    () => [
-      {
-        title: 'Développement Frontend',
-        description: "Formation complète sur le développement d'interfaces utilisateurs modernes",
-        modules: 6,
-        nextSession: '01/11/2023',
-      },
-      {
-        title: 'Développement Backend',
-        description: 'Maîtrise du développement côté serveur et bases de données',
-        modules: 5,
-        nextSession: '06/11/2023',
-      },
-    ],
-    [],
-  );
+  type Programme = {
+    title: string;
+    description: string;
+    modules: number;
+    nextSession: string;
+  };
+
+  const [programmes, setProgrammes] = useState<Programme[]>([
+    {
+      title: 'Développement Frontend',
+      description: "Formation complète sur le développement d'interfaces utilisateurs modernes",
+      modules: 6,
+      nextSession: '01/11/2023',
+    },
+    {
+      title: 'Développement Backend',
+      description: 'Maîtrise du développement côté serveur et bases de données',
+      modules: 5,
+      nextSession: '06/11/2023',
+    },
+  ]);
 
   // Données des modules de formation
   type Module = {
@@ -406,6 +419,41 @@ const AdminPage = () => {
   ]);
 
   const availableModules = useMemo(() => modules.map((module) => module.title), [modules]);
+
+  const handleProgrammeChange = (field: 'title' | 'description', value: string) => {
+    setNewProgramme((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const resetProgrammeForm = () => {
+    setNewProgramme({ title: '', description: '' });
+  };
+
+  const handleAddProgramme = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!newProgramme.title.trim() || !newProgramme.description.trim()) {
+      return;
+    }
+
+    const programmeToAdd: Programme = {
+      title: newProgramme.title.trim(),
+      description: newProgramme.description.trim(),
+      modules: 0,
+      nextSession: 'À planifier',
+    };
+
+    setProgrammes((prev) => [programmeToAdd, ...prev]);
+    setIsAddProgrammeModalOpen(false);
+    resetProgrammeForm();
+  };
+
+  const closeProgrammeModal = () => {
+    setIsAddProgrammeModalOpen(false);
+    resetProgrammeForm();
+  };
 
   const handleModuleChange = (field: keyof typeof newModule, value: string) => {
     setNewModule((prev) => ({
@@ -594,7 +642,7 @@ const AdminPage = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setIsAddModuleModalOpen(true)}
+                onClick={() => setIsAddProgrammeModalOpen(true)}
                 className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark"
               >
                 <span className="text-base text-white">
@@ -731,6 +779,86 @@ const AdminPage = () => {
               ))}
             </div>
           </section>
+        ) : null}
+
+        {isAddProgrammeModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-900">Créer un Programme</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Définissez le titre et la description de votre nouveau parcours de formation.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeProgrammeModal}
+                  className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                  aria-label="Fermer la fenêtre de création de programme"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M15.8334 4.1665L4.16669 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M4.16669 4.1665L15.8334 15.8332"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleAddProgramme} className="mt-6 flex flex-col gap-5">
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Nom du programme *
+                  <input
+                    type="text"
+                    value={newProgramme.title}
+                    onChange={(event) => handleProgrammeChange('title', event.target.value)}
+                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    placeholder="Ex: Développement Web Full-Stack"
+                    required
+                  />
+                </label>
+
+                <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  Description *
+                  <textarea
+                    value={newProgramme.description}
+                    onChange={(event) => handleProgrammeChange('description', event.target.value)}
+                    className="h-28 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y"
+                    placeholder="Description détaillée du programme de formation..."
+                    required
+                  />
+                </label>
+
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeProgrammeModal}
+                    className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-700"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-slate-300"
+                    disabled={!newProgramme.title.trim() || !newProgramme.description.trim()}
+                  >
+                    Créer le Programme
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         ) : null}
 
         {isAddModuleModalOpen ? (
